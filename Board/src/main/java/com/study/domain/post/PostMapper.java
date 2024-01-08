@@ -1,4 +1,4 @@
-package com.study.post;
+package com.study.domain.post;
 
 import java.util.List;
 
