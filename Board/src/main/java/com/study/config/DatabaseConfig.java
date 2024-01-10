@@ -14,6 +14,8 @@ import org.springframework.context.annotation.PropertySource;
 
 import javax.sql.DataSource;
 
+
+// 여기 쓰지 않고 properties에서만 사용하도록 해보기
 @Configuration
 @PropertySource("classpath:/application.properties")
 public class DatabaseConfig {
@@ -51,5 +53,5 @@ public class DatabaseConfig {
     public org.apache.ibatis.session.Configuration mybatisConfig() {
         return new org.apache.ibatis.session.Configuration();
     }
-
+    
 }

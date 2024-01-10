@@ -5,15 +5,7 @@
 
     <!-- tb_post 테이블 전체 컬럼 -->
     <sql id="postColumns">
-        id
-        , title
-        , content
-        , writer
-        , view_cnt
-        , notice_yn
-        , delete_yn
-        , created_date
-        , modified_date
+        id, title, content, writer, view_cnt, notice_yn, delete_yn, created_date, modified_date
     </sql>
 
 
@@ -22,15 +14,7 @@
         INSERT INTO tb_post (
         <include refid="postColumns" />
         ) VALUES (
-        #{id}
-        , #{title}
-        , #{content}
-        , #{writer}
-        , 0
-        , #{noticeYn}
-        , 0
-        , NOW()
-        , NULL
+        #{id},#{title},#{content},#{writer},0,#{noticeYn},0,NOW(),NULL
         )
     </insert>
 
