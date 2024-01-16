@@ -4,6 +4,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 
 @Controller
 @RequiredArgsConstructor
@@ -12,16 +13,12 @@ public class PostController {
     private final PostService postService;
 
     @GetMapping("/post/write")
-    public String openPostWrite(Model model){
+    public String openPostWrite(@RequestParam(value = "id", required = false)Long id, Model model) {
 
-        String title = "제목";
-        String content = "내용";
-        String writer = "테스터";
-
-        model.addAttribute("t", title);
-        model.addAttribute("c", content);
-        model.addAttribute("w", writer);
-
+        if(id != null) {
+            PostResponse post = postService.findPostById(id);
+            model.addAttribute("post", post);
+        }
         return "post/write";
     }
 }
