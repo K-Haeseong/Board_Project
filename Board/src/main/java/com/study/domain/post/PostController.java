@@ -1,7 +1,6 @@
 package com.study.domain.post;
 
 import lombok.RequiredArgsConstructor;
-import lombok.experimental.PackagePrivate;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -34,13 +33,20 @@ public class PostController {
         return "redirect:/post/list";
     }
 
-
+    // 게시글 리스트
     @GetMapping("/post/list")
     public String openPostList(Model model) {
         List<PostResponse> posts = postService.findAllPost();
         model.addAttribute("posts", posts);
         return "post/list";
+    }
 
+    // 게시글 상세 조회
+    @GetMapping("/post/view")
+    public String openPostView(@RequestParam("id") Long id, Model model) {
+        PostResponse post = postService.findPostById(id);
+        model.addAttribute("post", post);
+        return "post/view";
     }
 
 }

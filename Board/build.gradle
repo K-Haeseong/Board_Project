@@ -25,7 +25,7 @@ dependencies {
 	implementation 'org.springframework.boot:spring-boot-starter-web'
 	implementation 'org.springframework.boot:spring-boot-starter-thymeleaf'
 	/* Thymeleaf Layout */
-//	implementation 'nz.net.ultraq.thymeleaf:thymeleaf-layout-dialect'
+	implementation 'nz.net.ultraq.thymeleaf:thymeleaf-layout-dialect'
 	/* MyBatis 추가 */
 	implementation 'org.mybatis.spring.boot:mybatis-spring-boot-starter:3.0.3'
 
