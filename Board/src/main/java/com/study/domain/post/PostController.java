@@ -43,10 +43,18 @@ public class PostController {
 
     // 게시글 상세 조회
     @GetMapping("/post/view")
-    public String openPostView(@RequestParam("id") Long id, Model model) {
+    public String openPostView(Long id, Model model) {
+//    public String openPostView(@RequestParam("id") Long id, Model model) {
         PostResponse post = postService.findPostById(id);
         model.addAttribute("post", post);
         return "post/view";
+    }
+
+    // 게시글 수정
+    @PostMapping("/post/update")
+    public String updatePost(PostRequest params) {
+        postService.updatePost(params);
+        return "redirect:/post/list";
     }
 
 }

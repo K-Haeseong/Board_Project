@@ -62,7 +62,32 @@
 
 
             window.onload = () => {
-                initCreatedDate();
+                renderPostInfo();
+            }
+
+            // 게시글 상세정보 렌더링
+            function renderPostInfo() {
+                const post = [[ ${post} ]];
+                // console.log("post : ", post);
+
+                if(!post) {
+                    initCreatedDate();
+                    return false;
+                }
+
+                const form = document.getElementById('saveForm');
+                // console.log("form : ", form);
+                const fields = ['id', 'title', 'content', 'writer', 'noticeYn'];
+                form.isNotice.checked = post.noticeYn;
+                // console.log("post.createdDate : ", post.createdDate);
+                form.createdDate.value = dayjs(post.createdDate).format('YYYY-MM-DD HH:mm');
+
+                fields.forEach(field => {
+                    console.log(field);
+                    form[field].value = post[field];
+                    console.log(form[field].value, post[field]);
+                })
+
             }
 
 
