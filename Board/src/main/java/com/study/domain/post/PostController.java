@@ -26,12 +26,14 @@ public class PostController {
         return "post/write";
     }
 
+    
     // 신규 게시글 생성
     @PostMapping("/post/save")
     public String savePost(PostRequest params) {
         postService.savePost(params);
         return "redirect:/post/list";
     }
+
 
     // 게시글 리스트
     @GetMapping("/post/list")
@@ -40,6 +42,7 @@ public class PostController {
         model.addAttribute("posts", posts);
         return "post/list";
     }
+
 
     // 게시글 상세 조회
     @GetMapping("/post/view")
@@ -50,10 +53,19 @@ public class PostController {
         return "post/view";
     }
 
+
     // 게시글 수정
     @PostMapping("/post/update")
     public String updatePost(PostRequest params) {
         postService.updatePost(params);
+        return "redirect:/post/list";
+    }
+
+
+    // 게시글 삭제 - 물리적 삭제 X / 논리적 삭제 O
+    @PostMapping("/post/delete")
+    public String deletePost(Long id) {
+        postService.deletePost(id);
         return "redirect:/post/list";
     }
 
