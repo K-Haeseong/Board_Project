@@ -1,10 +1,12 @@
 package com.study.domain.post;
 
+import com.study.common.dto.MessageDto;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 
 import java.util.List;
@@ -29,9 +31,10 @@ public class PostController {
     
     // 신규 게시글 생성
     @PostMapping("/post/save")
-    public String savePost(PostRequest params) {
+    public String savePost(PostRequest params, Model model) {
         postService.savePost(params);
-        return "redirect:/post/list";
+        MessageDto message = new MessageDto("게시글 생성이 완료되었습니다.", "/post/list", RequestMethod.GET, null);
+        return showMessageAndRedirect(message, model);
     }
 
 
@@ -56,17 +59,26 @@ public class PostController {
 
     // 게시글 수정
     @PostMapping("/post/update")
-    public String updatePost(PostRequest params) {
+    public String updatePost(PostRequest params, Model model) {
         postService.updatePost(params);
-        return "redirect:/post/list";
+        MessageDto message = new MessageDto("게시글 수정이 완료되었습니다.", "/post/list", RequestMethod.GET, null);
+        return showMessageAndRedirect(message, model);
     }
 
 
     // 게시글 삭제 - 물리적 삭제 X / 논리적 삭제 O
     @PostMapping("/post/delete")
-    public String deletePost(Long id) {
+    public String deletePost(Long id, Model model) {
         postService.deletePost(id);
-        return "redirect:/post/list";
+        MessageDto message = new MessageDto("게시글 삭제가 완료되었습니다.", "/post/list", RequestMethod.GET, null);
+        return showMessageAndRedirect(message, model);
+    }
+
+    
+    // 사용자에게 메시지를 전달, 페이지 리다이렉트
+    private String showMessageAndRedirect(MessageDto params, Model model) {
+        model.addAttribute("params", params);
+        return "common/messageRedirect";
     }
 
 }
