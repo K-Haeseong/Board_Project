@@ -26,6 +26,7 @@ public class LoggerInterceptor implements HandlerInterceptor {
         log.debug("===============================================");
         log.debug("==================== END ======================");
         log.debug("===============================================");
+
         HandlerInterceptor.super.postHandle(request, response, handler, modelAndView);
     }
 

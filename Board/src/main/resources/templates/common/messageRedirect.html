@@ -3,7 +3,7 @@
 <head th:replace="fragments/header :: main-head"></head>
 <body>
     <form th:if="${not #maps.isEmpty(params.data)}" id="redirectForm" 
-        th:action="${parmas.redirectUri}" th:method="${params.method}" sytle="display: none;">
+        th:action="${params.redirectUri}" th:method="${params.method}" sytle="display: none;">
         <input th:each="key, status : ${params.data.keySet()}" type="hidden" th:name="${key}" th:value="${params.data.get(key)}" />
     </form>
 
