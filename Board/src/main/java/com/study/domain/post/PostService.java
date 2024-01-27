@@ -1,5 +1,6 @@
 package com.study.domain.post;
 
+import com.study.common.dto.SearchDto;
 import lombok.RequiredArgsConstructor;
 import org.apache.ibatis.annotations.Mapper;
 import org.springframework.stereotype.Service;
@@ -60,7 +61,7 @@ public class PostService {
      * return - id
      * */
 
-    public List<PostResponse> findAllPost(){
-        return postMapper.findAll();
+    public List<PostResponse> findAllPost(SearchDto params){
+        return postMapper.findAll(params);
     }
 }
