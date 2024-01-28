@@ -71,7 +71,7 @@
         from tb_post
         where delete_yn = 0
         order by id desc
-        limit #{offset}, #{recordSize};
+        limit #{pagination.limitStart}, #{recordSize};
     </select>
 
     <!-- 게시글 수 카운팅 -->
