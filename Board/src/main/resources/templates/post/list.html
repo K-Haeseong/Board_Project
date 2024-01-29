@@ -33,14 +33,14 @@
                         <col style="width:50px;"/><col style="width:7.5%;"/><col style="width:auto;"/><col style="width:10%;"/><col style="width:15%;"/><col style="width:7.5%;"/>
                     </colgroup>
                     <thead>
-                    <tr>
-                        <th scope="col"><input type="checkbox"/></th>
-                        <th scope="col">번호</th>
-                        <th scope="col">제목</th>
-                        <th scope="col">작성자</th>
-                        <th scope="col">등록일</th>
-                        <th scope="col">조회</th>
-                    </tr>
+                        <tr>
+                            <th scope="col"><input type="checkbox"/></th>
+                            <th scope="col">번호</th>
+                            <th scope="col">제목</th>
+                            <th scope="col">작성자</th>
+                            <th scope="col">등록일</th>
+                            <th scope="col">조회</th>
+                        </tr>
                     </thead>
 
                     <!-- 리스트 데이터 렌더링 영역 -->
@@ -60,5 +60,130 @@
                 </p>
             </section>
         </div> <!-- content -->
+    </th:block>
+
+    <th:block layout:fragment="script">
+        <script th:inline="javascript">
+            /*<![CDATA[*/
+
+                window.onload = () => {
+                    // 페이지가 로드되었을 때, 딱 한 번만 함수를 실행
+                    findAllPost();
+                }
+
+
+                // 게시글 리스트 조회
+                function findAllPost() {
+
+                    const list = [[${response.list}]];
+
+                    if(!list.length) {
+                        document.getElementById("list").innerHTML =
+                        `<td colspan="6"><div calssName="no_data_msg">검색된 결과가 없습니다.</div></td>`
+                        drawPage();
+                    }
+
+                    const pagination = [[${response.pagination}]];
+
+                    const params = [[${params}]];
+                    console.log("params :", params);
+
+                    // 리스트에 출력 되는 게시글 번호 처리 - 페이지 정보를 통해서 맨 위 게시글 번호 설정
+                    let num = pagination.totalRecordCount - ((params.page - 1) * params.recordSize);
+
+                    // 리스트 데이터 렌더링
+                    drawList(list, num);
+
+                    // 페이지네이션 렌더링
+                    drawPage(pagination, params);
+                }
+
+                
+                function drawList(list, num) {
+                    let html = '';
+
+                    list.forEach(row => {
+                       html += `
+                        <tr>
+                            <td><input type="checkbox" /></td>
+                            <td>${row.noticeYn === false ? num--:'공지'}</td>
+                            <td class="tl"><a href="/post/view?id=${row.id}">${row.title}</a></td>
+                            <td>${row.writer}</td>
+                            <td>${dayjs(row.createDate).format("YYYY-MM-DD HH:mm")}</td>
+                            <td>${row.viewCnt}</td>
+                        </tr>    
+                       `;
+                    });
+
+                    document.getElementById("list").innerHTML = html;
+                }
+
+
+                function drawPage(pagination, params) {
+
+                    // 필수 파라미터가 없을 때, 페이지네이션 html 제거 한 후 종료
+                    if(!pagination || !params) {
+                        document.querySelector('.paging').innerHTML ='';
+                        throw new Error("Missing required parameters");
+                    }
+
+                    // 2. 렌더링 할 HTML을 저장할 변수
+                    let html = '';
+
+                    // 3. 이전 페이지가 있는 경우, 즉 시작 페이지(startPage)가 1이 아닌 경우 첫 페이지 버튼과 이전 페이지 버튼을 HTML에 추가
+                    // 이전 페이지(${pagination.startPage - 1) 다시 생각해보기
+                    if(pagination.exitPrevPage) {
+                        html += 
+                        `
+                        <a href="javascript:void(0);" onclick="movePage(1)" class="page_bt first">첫 페이지</a>
+                        <a href="javascript:void(0);" onclick="movePage(${pagination.startPage - 1})" class="page_bt prev">이전 페이지</a>
+                        `;
+                    }
+
+                    /*
+                    * 4. 시작 페이지(startPage)와 끝 페이지(endPage) 사이의 페이지 번호(i)를 넘버링 하는 로직
+                    *    페이지 번호(i)와 현재 페이지 번호(params.page)가 동일한 경우, 페이지 번호(i)를 활성화(on) 처리
+                    */
+                    html += '<p>';
+                    for (let i = pagination.startPage; i <= pagination.endPage; i++) {
+                        html += (i !== params.page)
+                            ? `<a href="javascript:void(0);" onclick="movePage(${i});">${i}</a>`
+                            : `<span class="on">${i}</span>`
+                    }
+                    html += '</p>';
+                    
+
+
+
+                    // 5. 현재 위치한 페이지 뒤에 데이터가 더 있는 경우, 다음 페이지 버튼과 끝 페이지 버튼을 HTML에 추가
+                    if(pagination.exitNextPage) {
+                        html += 
+                        `
+                        <a href="javascript:void(0); onclick="movePage(${pagination.endPage + 1});">다음 페이지</a>
+                        <a href="javascript:void(0); onclick="movePage(${pagination.totalPageCount});">끝 페이지</a> 
+                        `;
+                    }
+
+                    // 6. class가 "paging"인 요소를 찾아 HTML을 렌더링
+                    document.querySelector(".paging").innerHTML = html;
+                }
+
+
+                // 페이지 이동
+                function movePage(page) {
+
+                const queryParams = {
+                    page: (page) ? page : 1,
+                    recordSize: 10,
+                    pageSize: 10
+                }
+
+            
+                location.href = location.pathname + '?' + new URLSearchParams(queryParams).toString();
+                }
+
+
+                    
+        </script>    
     </th:block>
 </html>

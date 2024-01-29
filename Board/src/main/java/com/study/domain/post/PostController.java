@@ -6,10 +6,7 @@ import com.study.common.paging.PagingResponse;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
@@ -42,9 +39,9 @@ public class PostController {
 
     // 게시글 리스트
     @GetMapping("/post/list")
-    public String openPostList(SearchDto params, Model model) {
+    public String openPostList(@ModelAttribute("params") SearchDto params, Model model) {
         PagingResponse<PostResponse> response  = postService.findAllPost(params);
-        model.addAttribute("response ", response);
+        model.addAttribute("response", response);
         return "post/list";
     }
 

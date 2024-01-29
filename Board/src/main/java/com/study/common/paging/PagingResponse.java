@@ -12,7 +12,7 @@ public class PagingResponse<T> {
     private Pagination pagination;
 
     public PagingResponse(List<T> list, Pagination pagination) {
-        this.list = list;
+        this.list.addAll(list);
         this.pagination = pagination;
     }
 }

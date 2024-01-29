@@ -8,8 +8,8 @@ public class Pagination {
 
     private int totalRecordCount; // 전체 게시글 수
     private int totalPageCount; // 전체 페이지 수
-    private int startPage; // 첫 페이지
-    private int endPage; // 끝 페이지
+    private int startPage; // 해당 페이지의 첫 페이지
+    private int endPage; // 해당 페이지의 끝 페이지
     private int limitStart; // Limit 시작 위치
     private boolean existPrevPage; // 이전 페이지 유무
     private boolean existNextPage; // 다음 페이지 유무
