@@ -16,13 +16,14 @@
                 <div class="search_box">
                     <form id="searchForm" onsubmit="return false;" autocomplete="off">
                         <div class="sch_group fl">
-                            <select title="검색 유형 선택">
+                            <select id="searchType" name="searchType" title="검색 유형 선택">
                                 <option value="">전체 검색</option>
-                                <option value="">제목</option>
-                                <option value="">내용</option>
+                                <option value="title">제목</option>
+                                <option value="content">내용</option>
+                                <option value="writer">작성자</option>
                             </select>
-                            <input type="text" placeholder="키워드를 입력해 주세요." title="키워드 입력"/>
-                            <button type="button" class="bt_search"><i class="fas fa-search"></i><span class="skip_info">검색</span></button>
+                            <input type="text" id="keyword" name="keyword" placeholder="키워드를 입력해 주세요." title="키워드 입력"/>
+                            <button type="button" class="bt_search" onclick="movePage(1);"><i class="fas fa-search"></i><span class="skip_info">검색</span></button>
                         </div>
                     </form>
                 </div>
@@ -62,128 +63,134 @@
         </div> <!-- content -->
     </th:block>
 
-    <th:block layout:fragment="script">
+   <th:block layout:fragment="script">
         <script th:inline="javascript">
-            /*<![CDATA[*/
+            /* <![CDATA[ */
 
-                window.onload = () => {
-                    // 페이지가 로드되었을 때, 딱 한 번만 함수를 실행
-                    findAllPost();
+            window.onload = () => {
+                findAllPost();
+            }
+
+
+            function findAllPost() {
+                // PagingResponse의 멤버 list값 가져오기
+                const list = [[${response.list}]];
+                // console.log("list : ", list);
+
+                // 리스트가 비어 있으면, "검색 결과가 없다는 메시지 출력"
+                if(list.length) {
+                    document.getElementById("list").innerHTML = 
+                    `
+                    <td colspan="6">
+                        <div className="no_data_msg">검색된 결과가 없습니다.</div>
+                    </td>
+                    `;
                 }
 
-
-                // 게시글 리스트 조회
-                function findAllPost() {
-
-                    const list = [[${response.list}]];
-
-                    if(!list.length) {
-                        document.getElementById("list").innerHTML =
-                        `<td colspan="6"><div calssName="no_data_msg">검색된 결과가 없습니다.</div></td>`
-                        drawPage();
-                    }
-
-                    const pagination = [[${response.pagination}]];
-
-                    const params = [[${params}]];
-                    console.log("params :", params);
-
-                    // 리스트에 출력 되는 게시글 번호 처리 - 페이지 정보를 통해서 맨 위 게시글 번호 설정
-                    let num = pagination.totalRecordCount - ((params.page - 1) * params.recordSize);
-
-                    // 리스트 데이터 렌더링
-                    drawList(list, num);
-
-                    // 페이지네이션 렌더링
-                    drawPage(pagination, params);
-                }
-
+                const pagination = [[${response.pagination}]];
+                // console.log("pagination : ", pagination);
                 
-                function drawList(list, num) {
-                    let html = '';
+                
+                const params = [[${params}]];
+                // console.log("params : ", params);
+                
+                let num = pagination.totalRecordCount - ((params.page -1) * params.recordSize);
 
-                    list.forEach(row => {
-                       html += `
-                        <tr>
-                            <td><input type="checkbox" /></td>
-                            <td>${row.noticeYn === false ? num--:'공지'}</td>
-                            <td class="tl"><a href="/post/view?id=${row.id}">${row.title}</a></td>
-                            <td>${row.writer}</td>
-                            <td>${dayjs(row.createDate).format("YYYY-MM-DD HH:mm")}</td>
-                            <td>${row.viewCnt}</td>
-                        </tr>    
-                       `;
-                    });
+                // 리스트 데이터 렌더링
+                drawList(list, num);
 
-                    document.getElementById("list").innerHTML = html;
+                // 페이지네이션 렌더링
+                drawPage(pagination, params);
+            }
+
+
+            function drawList(list, num) {
+                
+                let html = '';
+
+                list.forEach(row => {
+                    html +=
+                    `
+                    <tr>
+                        <td><input type="checkbox" /></td>
+                        <td>${row.noticeYn === false ? num-- : '공지'}</td>
+                        <td class="tl"><a href="/post/view?id=${row.id}">${row.title}</a></td>
+                        <td>${row.writer}</td>
+                        <td>${dayjs(row.createdDate).format('YYYY-MM-DD HH:mm')}</td>
+                        <td>${row.viewCnt}</td>
+                    </tr>
+                    `;
+                })
+
+                document.getElementById("list").innerHTML = html;
+            }
+
+
+            function drawPage(pagination, params) {
+                
+                // 파라미터가 없는 경우
+                if(!pagination || !params) {
+                    document.querySelector(".paging").innerHTML='';
+                    throw new Error("Missing required parameters");
+                }
+ 
+                let html='';
+                
+                // 이전 페이지가 있는 경우 - 1페이지가 아닌 경우?
+                // 첫 페이지 - 1페이지로 이동
+                // 이전 페이지 - 이전 페이지 목록으로 이동 
+                //  EX) 13페이지(11~20페이지 목록) -> 1~10 페이지 목록에 10페이지로 이동
+                if(pagination.existPrevPage) {
+                    html +=
+                    `
+                    <a href="javascript:void(0);" onclick="movePage(1)" class="page_bt first">첫 페이지</a>
+                    <a href="javascript:void(0);" onclick="movePage(${pagination.startPage - 1})" class="page_bt prev">이전 페이지</a>
+                    `;
                 }
 
-
-                function drawPage(pagination, params) {
-
-                    // 필수 파라미터가 없을 때, 페이지네이션 html 제거 한 후 종료
-                    if(!pagination || !params) {
-                        document.querySelector('.paging').innerHTML ='';
-                        throw new Error("Missing required parameters");
-                    }
-
-                    // 2. 렌더링 할 HTML을 저장할 변수
-                    let html = '';
-
-                    // 3. 이전 페이지가 있는 경우, 즉 시작 페이지(startPage)가 1이 아닌 경우 첫 페이지 버튼과 이전 페이지 버튼을 HTML에 추가
-                    // 이전 페이지(${pagination.startPage - 1) 다시 생각해보기
-                    if(pagination.exitPrevPage) {
-                        html += 
-                        `
-                        <a href="javascript:void(0);" onclick="movePage(1)" class="page_bt first">첫 페이지</a>
-                        <a href="javascript:void(0);" onclick="movePage(${pagination.startPage - 1})" class="page_bt prev">이전 페이지</a>
-                        `;
-                    }
-
-                    /*
-                    * 4. 시작 페이지(startPage)와 끝 페이지(endPage) 사이의 페이지 번호(i)를 넘버링 하는 로직
-                    *    페이지 번호(i)와 현재 페이지 번호(params.page)가 동일한 경우, 페이지 번호(i)를 활성화(on) 처리
-                    */
-                    html += '<p>';
-                    for (let i = pagination.startPage; i <= pagination.endPage; i++) {
-                        html += (i !== params.page)
-                            ? `<a href="javascript:void(0);" onclick="movePage(${i});">${i}</a>`
-                            : `<span class="on">${i}</span>`
-                    }
-                    html += '</p>';
-                    
-
-
-
-                    // 5. 현재 위치한 페이지 뒤에 데이터가 더 있는 경우, 다음 페이지 버튼과 끝 페이지 버튼을 HTML에 추가
-                    if(pagination.exitNextPage) {
-                        html += 
-                        `
-                        <a href="javascript:void(0); onclick="movePage(${pagination.endPage + 1});">다음 페이지</a>
-                        <a href="javascript:void(0); onclick="movePage(${pagination.totalPageCount});">끝 페이지</a> 
-                        `;
-                    }
-
-                    // 6. class가 "paging"인 요소를 찾아 HTML을 렌더링
-                    document.querySelector(".paging").innerHTML = html;
+                // 현재 페이내 내, 첫 페이지 번호와 끝 페이지 번호 사이 페이지들 만들기
+                html += `<p>`;
+                for (let i = pagination.startPage; i <= pagination.endPage; i++) {
+                    html += (i == params.page)
+                    ? `<span class="on">${i}</span>`
+                    : `<a href="javascript:void(0);" onclick="movePage(${i})">${i}</a>`
                 }
+                html += `</p>`;
+
+                // 다음 페이지가 있는 경우 - 현재 페이지 뒤에 데이터가 더 있는 경우
+                if(pagination.existNextPage) {
+                    html +=
+                    `
+                    <a href="javascript:void(0);" onclick="movePage(${pagination.endPage + 1});" class="page_bt next">다음 페이지</a>
+                    <a href="javascript:void(0);" onclick="movePage(${pagination.totalPageCount});" class="page_bt last">마지막 페이지</a>
+                    `;
+                }
+                
+                document.querySelector(".paging").innerHTML = html;
+            }
 
 
-                // 페이지 이동
-                function movePage(page) {
+            // 페이지 이동
+            function movePage(page) {
 
-                const queryParams = {
+                // 검색 폼 값 가져오기
+                const form = document.getElementById("searchForm");
+                console.log("form : ", form);
+
+
+                const queryParmas = {
                     page: (page) ? page : 1,
                     recordSize: 10,
-                    pageSize: 10
+                    pageSize: 10,
+                    searchType: form.searchType.value,
+                    keyword: form.keyword.value
                 }
+                
+                location.href = location.pathname + "?" + new URLSearchParams(queryParmas).toString();
+            }
 
-            
-                location.href = location.pathname + '?' + new URLSearchParams(queryParams).toString();
-                }
 
-
-                    
-        </script>    
-    </th:block>
+            /* ]] */
+        </script>
+   </th:block>
 </html>
