@@ -63,12 +63,31 @@
         </div> <!-- content -->
     </th:block>
 
+
    <th:block layout:fragment="script">
         <script th:inline="javascript">
             /* <![CDATA[ */
 
             window.onload = () => {
+                setQueryStringParams();
+
                 findAllPost();
+            }
+
+
+            function setQueryStringParams() {
+                
+                if(!location.search) {
+                    return false;
+                }
+
+                const form = document.getElementById("searchForm");
+
+                new URLSearchParams(location.search).forEach((value, key) => {
+                    if(form[key]) {
+                        form[key].value = value;
+                    }
+                })
             }
 
 
@@ -101,6 +120,7 @@
 
                 // 페이지네이션 렌더링
                 drawPage(pagination, params);
+
             }
 
 
@@ -114,7 +134,7 @@
                     <tr>
                         <td><input type="checkbox" /></td>
                         <td>${row.noticeYn === false ? num-- : '공지'}</td>
-                        <td class="tl"><a href="/post/view?id=${row.id}">${row.title}</a></td>
+                        <td class="tl"><a href="javascript:void(0);" onclick="goViewPage(${row.id});">${row.title}</a></td>
                         <td>${row.writer}</td>
                         <td>${dayjs(row.createdDate).format('YYYY-MM-DD HH:mm')}</td>
                         <td>${row.viewCnt}</td>
@@ -175,9 +195,7 @@
 
                 // 검색 폼 값 가져오기
                 const form = document.getElementById("searchForm");
-                console.log("form : ", form);
-
-
+                
                 const queryParmas = {
                     page: (page) ? page : 1,
                     recordSize: 10,
@@ -189,6 +207,11 @@
                 location.href = location.pathname + "?" + new URLSearchParams(queryParmas).toString();
             }
 
+
+            function goViewPage(id) {
+                const queryString = (location.search) ? location.search + `&id=${id}` : `?id=${id}`;
+                location.href = '/post/view' + queryString;
+            }
 
             /* ]] */
         </script>

@@ -89,11 +89,11 @@
                 <!-- 검색유형 : 전체 검색일 때 -->
                 <otherwise>
                     and (
-                    title like concat('%', #{keyword},'%')
-                    or
-                    content like concat('%', #{keyword},'%')
-                    or
-                    writer like concat('%', #{keyword},'%')
+                        title like concat('%', #{keyword},'%')
+                        or
+                        content like concat('%', #{keyword},'%')
+                        or
+                        writer like concat('%', #{keyword},'%')
                     )
                 </otherwise>
             </choose>
