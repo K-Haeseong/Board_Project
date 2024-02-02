@@ -19,11 +19,13 @@
 
             const form = document.getElementById('redirectForm');
             console.log("form : ", form);
+            // form 태그가 작성 되었다면 실행
             if(form) {
                 form.submit();
                 return false;
             }
 
+            // form 태그가 없다면 messageDto에 작성된 uri로 이동
             const redirectUri = [[${params.redirectUri}]];
             location.href = redirectUri;
         }

@@ -50,7 +50,7 @@
                 </form>
                 <p class="btn_set">
                     <button type="button" id="saveBtn" onclick="savePost();" class="btns btn_st3 btn_mid">저장</button>
-                    <a th:href="@{/post/list}" class="btns btn_bdr3 btn_mid">뒤로</a>
+                    <button type="button" onclick="goListPage();" class="btns btn_bdr4 btn_mid">뒤로</button>
                 </p>
             </section>
         </div> <!--/* .content */-->
@@ -109,11 +109,30 @@
                         isValid(fields[i], fieldNames[i]);
                     }
 
+                    
+                    new URLSearchParams(location.search).forEach((value, key) => {
+                        const input = document.createElement("input");
+                        input.type = "hidden";
+                        input.name = key;
+                        input.value = value;
+                        form.append(input);
+                    })
+
 
                     document.getElementById('saveBtn').disabled = true;
                     form.noticeYn.value = form.isNotice.checked;
                     form.action = [[ ${post == null} ]] ? '/post/save' : '/post/update';
                     form.submit();
+                }
+
+
+                 // 게시글 리스트 페이지로 이동
+                function goListPage() {
+                    // URLSearchParams : 쿼리 스트링을 편리하게 다루는 JavaScript의 내장 클래스
+                    const queryString = new URLSearchParams(location.search);
+                    queryString.delete('id');
+                    // const queryString = new URLSearchParams(location.search).delete('id');
+                    location.href = "/post/list" + "?" + queryString.toString();
                 }
 
             /*]]>*/

@@ -65,9 +65,9 @@ public class PostController {
 
     // 게시글 수정
     @PostMapping("/post/update")
-    public String updatePost(PostRequest params, Model model) {
+    public String updatePost(PostRequest params, SearchDto queryParams, Model model) {
         postService.updatePost(params);
-        MessageDto message = new MessageDto("게시글 수정이 완료되었습니다.", "/post/list", RequestMethod.GET, null);
+        MessageDto message = new MessageDto("게시글 수정이 완료되었습니다.", "/post/list", RequestMethod.GET, queryParamsToMap(queryParams));
         return showMessageAndRedirect(message, model);
     }
 
