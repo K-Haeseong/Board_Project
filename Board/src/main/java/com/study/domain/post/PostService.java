@@ -4,7 +4,6 @@ import com.study.common.dto.SearchDto;
 import com.study.common.paging.Pagination;
 import com.study.common.paging.PagingResponse;
 import lombok.RequiredArgsConstructor;
-import org.apache.ibatis.annotations.Mapper;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
