@@ -20,8 +20,8 @@
         ) values (
                 #{id}
             ,   #{postId}
-            ,   #{writer}
             ,   #{content}
+            ,   #{writer}
             ,   0
             ,   now()
             ,   null
@@ -34,7 +34,7 @@
         select
             <include refid="commentColumns" />
         from
-            tb_post
+            tb_comment
         where
             id = #{id}
     </select>
@@ -43,7 +43,7 @@
     <!-- 댓글 수정 -->
     <update id="update" parameterType="com.study.domain.comment.CommentRequest">
         update
-            tb_post
+            tb_comment
         set
             content = #{content}
         ,   modified_date = now()
@@ -56,7 +56,7 @@
     <!-- 댓글 삭제 -->
     <update id="deleteById" parameterType="long">
         update
-            tb_post
+            tb_comment
         set
             delete_yn = 1
         where
@@ -69,11 +69,13 @@
         select
             <include refid="commentColumns" />
         from
-            tb_post
+            tb_comment
         where
             delete_yn = 0
             and
-            post_id = #{id}
+            post_id = #{postId}
+        order by
+            id desc
     </select>
 
     <!-- 댓글 수 계산 -->
@@ -81,7 +83,7 @@
         select
             count(*)
         from
-            tb_post
+            tb_comment
         where
             delete_yn = 0
             and
