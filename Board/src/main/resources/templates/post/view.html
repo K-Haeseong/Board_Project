@@ -59,6 +59,15 @@
                     </fieldset>
                 </div>
 
+                <!-- 댓글 목록 -->
+                <div calss="cm_list">
+
+                </div>
+                
+
+                
+
+                    
             </section>
         </div> <!-- content -->
     </th:block>
@@ -66,6 +75,62 @@
     <th:block layout:fragment="script">
         <script th:inline="javascript" >
             /*<![CDATA[*/
+
+
+            window.onload = () => {
+                findAllComment();
+            }
+
+
+            function findAllComment() {
+
+                const postId = [[ ${post.id}]]
+
+                $.ajax({
+                    url : `/posts/${postId}/comments`,
+                    type : 'get',
+                    datatype : 'json',
+                    async : false,
+                    success : function(response) {
+                        console.log("SUCCESS : ", response);
+
+                        // 조회된 댓글이 없을 경우
+                        if(!response.length) {
+                            document.querySelector('.cm_list').innerHTML =
+                            `<div calss="cm_none">등록된 댓글이 없습니다.</div>`
+                            return false;
+                        }
+
+                        // 댓글 목록이 있는 경우
+
+                        let commentHtml= '';
+
+                        response.forEach(row => {
+                            commentHtml +=
+                            `
+                            <div>
+                                <span class="writer_img"><img src="/images/default_profile.png" width="30" height="30" alt="기본 프로필 이미지"/></span>
+                                <p class="writer">
+                                    <em>${row.writer}</em>
+                                    <span class="date">${dayjs(row.createdDate).format("YYYY-MM-DD HH:mm")}</span>
+                                </p>
+                                <div class="cont"><div class="txt_con">${row.content}</div>
+                                <p class="func_btns">
+                                    <button type="button" class="btns"><span class="icons icon_modify">수정</span></button>
+                                    <button type="button" class="btns"><span class="icons icon_del">삭제</span></button>
+                                </p>
+                            </div>
+                            `;
+                        })
+
+                        document.querySelector(".cm_list").innerHTML = commentHtml;
+                    },
+                    error : function(request, status, error) {
+                        console.log("request : ", request ,"ERROR : ", error);
+                    }
+                })
+
+            }
 
 
             // 게시글 수정 페이지로 이동
@@ -116,6 +181,7 @@
                 document.getElementById('deleteForm').submit();
             }
 
+
             // 댓글 길이 카운팅
             // 사용자가 텍스트 영역에 글자를 입력할 때마다 countingLength 함수가 호출
             // 함수 내에서 현재 입력된 글자 수가 300자를 초과하는지 확인
@@ -130,6 +196,7 @@
 
                 document.getElementById("counter").innerText=content.value.length + "/300자"
             }
+
 
 
             // 댓글 저장
@@ -157,21 +224,6 @@
                     error : function (request, status, error) {
                         console.log("Error :", error);
                     }
-
-
-                    // url : `/posts/${postId}/comments`,
-                    // type : 'post',
-                    // contentType : 'application/json; charset=utf-8',
-                    // dataType : 'json',
-                    // data : JSON.stringify(params),
-                    // async : false,
-                    // success : function (response) {
-                    //     console.log(response);
-                    // },
-                    // error : function (request, status, error) {
-                    //     console.log(error)
-                    // }
-
                 })
 
             }
