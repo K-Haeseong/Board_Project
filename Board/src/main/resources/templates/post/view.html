@@ -60,13 +60,9 @@
                 </div>
 
                 <!-- 댓글 목록 -->
-                <div calss="cm_list">
+                <div class="cm_list">
 
                 </div>
-                
-
-                
-
                     
             </section>
         </div> <!-- content -->
@@ -97,12 +93,11 @@
                         // 조회된 댓글이 없을 경우
                         if(!response.length) {
                             document.querySelector('.cm_list').innerHTML =
-                            `<div calss="cm_none">등록된 댓글이 없습니다.</div>`
+                            `<div class="cm_none">등록된 댓글이 없습니다.</div>`
                             return false;
                         }
 
                         // 댓글 목록이 있는 경우
-
                         let commentHtml= '';
 
                         response.forEach(row => {
@@ -114,7 +109,7 @@
                                     <em>${row.writer}</em>
                                     <span class="date">${dayjs(row.createdDate).format("YYYY-MM-DD HH:mm")}</span>
                                 </p>
-                                <div class="cont"><div class="txt_con">${row.content}</div>
+                                <div class="cont"><div class="txt_con">${row.content}</div></div>
                                 <p class="func_btns">
                                     <button type="button" class="btns"><span class="icons icon_modify">수정</span></button>
                                     <button type="button" class="btns"><span class="icons icon_del">삭제</span></button>
@@ -122,8 +117,8 @@
                             </div>
                             `;
                         })
-
-                        document.querySelector(".cm_list").innerHTML = commentHtml;
+                        console.log("commentHtml : ", commentHtml);
+                        document.querySelector(".cm_list").innerHTML=commentHtml;
                     },
                     error : function(request, status, error) {
                         console.log("request : ", request ,"ERROR : ", error);
@@ -131,6 +126,60 @@
                 })
 
             }
+
+
+            // 댓글 길이 카운팅
+            // 사용자가 텍스트 영역에 글자를 입력할 때마다 countingLength 함수가 호출
+            // 함수 내에서 현재 입력된 글자 수가 300자를 초과하는지 확인
+            // 만약 300자를 초과하면 경고 창을 띄우고, 입력된 내용을 300자까지만 남기고 자른다.
+            // 입력된 글자 수를 실시간으로 보여주는 요소의 내용을 업데이트
+            function countingLength(content) {
+                if(content.value.length > 300) {
+                    alert("댓글은 300자 이하로 작성해주세요.");
+                    content.value = content.value.substring(0,300);
+                    content.focus();
+                }
+
+                document.getElementById("counter").innerText=content.value.length + "/300자"
+            }
+
+
+
+            // 댓글 저장
+            function saveComment() {
+
+                const content = document.getElementById("content");
+                isValid(content, "댓글");
+                const postId = [[ ${post.id} ]];
+
+
+                const params = {
+                    postId : postId,
+                    content : content.value,
+                    writer : "테스터"
+                }
+
+                $.ajax({
+                    url : `/posts/${postId}/comments`,
+                    type : 'post',
+                    contentType : 'application/json; charset=utf-8',
+                    dataType : 'json',
+                    data: JSON.stringify(params),
+                    async : false,
+                    success : function (response) {
+                        console.log("Success : ", response);
+                        alert("댓글이 저장되었습니다.")
+                        content.value = '';
+                        document.getElementById("counter").innerText="0/300자";
+                        findAllComment();
+                    },
+                    error : function (request, status, error) {
+                        console.log("Error :", error);
+                    }
+                })
+
+            }
+
 
 
             // 게시글 수정 페이지로 이동
@@ -182,51 +231,7 @@
             }
 
 
-            // 댓글 길이 카운팅
-            // 사용자가 텍스트 영역에 글자를 입력할 때마다 countingLength 함수가 호출
-            // 함수 내에서 현재 입력된 글자 수가 300자를 초과하는지 확인
-            // 만약 300자를 초과하면 경고 창을 띄우고, 입력된 내용을 300자까지만 남기고 자른다.
-            // 입력된 글자 수를 실시간으로 보여주는 요소의 내용을 업데이트
-            function countingLength(content) {
-                if(content.value.length > 300) {
-                    alert("댓글은 300자 이하로 작성해주세요.");
-                    content.value = content.value.substring(0,300);
-                    content.focus();
-                }
-
-                document.getElementById("counter").innerText=content.value.length + "/300자"
-            }
-
-
-
-            // 댓글 저장
-            function saveComment() {
-
-                const content = document.getElementById("content");
-                const postId = [[ ${post.id} ]];
-
-                const params = {
-                    postId : postId,
-                    content : content.value,
-                    writer : "테스터"
-                }
-
-                $.ajax({
-                    url : `/posts/${postId}/comments`,
-                    type : 'post',
-                    contentType : 'application/json; charset=utf-8',
-                    dataType : 'json',
-                    data: json.stringify(params),
-                    async : false,
-                    success : function (response) {
-                        console.log("Success : ", response);
-                    },
-                    error : function (request, status, error) {
-                        console.log("Error :", error);
-                    }
-                })
-
-            }
+            
 
 
             /*]]>*/
