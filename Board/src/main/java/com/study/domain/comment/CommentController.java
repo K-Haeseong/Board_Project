@@ -21,11 +21,28 @@ public class CommentController {
 
     }
 
+    // 댓글 목록 조회
     @GetMapping("/posts/{postId}/comments")
     public List<CommentResponse> findAllComment(@PathVariable Long postId) {
 
         return commentService.findAllComment(postId);
 
+    }
+
+    // 댓글 상세정보 조회
+    @GetMapping("/posts/{postId}/comments/{id}")
+    public CommentResponse findCommentById(@PathVariable Long postId,
+                                           @PathVariable Long id) {
+        return commentService.findCommentById(id);
+    }
+
+    // 댓글 수정
+    @PatchMapping("/posts/{postId}/comments/{id}")
+    public CommentResponse updateComment(@PathVariable Long postId,
+                                         @PathVariable Long id,
+                                         @RequestBody CommentRequest params) {
+        commentService.updateComment(params);
+        return commentService.findCommentById(id);
     }
 
 
