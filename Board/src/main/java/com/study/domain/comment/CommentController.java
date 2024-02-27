@@ -14,7 +14,7 @@ public class CommentController {
     // 신규 댓글 생성
     @PostMapping("/posts/{postId}/comments")
     public CommentResponse saveComment(@PathVariable Long postId,
-                                       @RequestBody CommentRequest params) {
+                                       @RequestBody CommentRequest params)  {
 
         Long id = commentService.saveComment(params);
         return commentService.findCommentById(id);
@@ -46,8 +46,6 @@ public class CommentController {
     }
 
 
-
-
-
+    
 
 }
