@@ -141,7 +141,7 @@
                                 <div class="cont"><div class="txt_con">${row.content}</div></div>
                                 <p class="func_btns">
                                     <button type="button" class="btns" onclick="openCommentUpdatePopup(${row.id});" ><span class="icons icon_modify">수정</span></button>
-                                    <button type="button" class="btns"><span class="icons icon_del">삭제</span></button>
+                                    <button type="button" class="btns" onclick="deleteComment(${row.id})"><span class="icons icon_del">삭제</span></button>
                                 </p>
                             </div>
                             `;
@@ -286,6 +286,70 @@
                     }
                 })
             }
+
+
+            
+            /* 
+            Indent depth(들여쓰기)를 줄이는 코딩 
+            : depth가 낮을 수록 읽기 좋은 코딩 
+            : 예외 조건을 앞쪽에 선언해 두고, 뒤쪽에서 메인 로직이 실행되는 구조로 코딩하는 연습
+            -> 들여쓰기가 늘어날 수록 depth가 증가
+                EX) 1번 : Indent depth = 1 ( GOOD )
+                    2번 : Indent depth = 2
+            */
+            // 댓글 삭제
+            // 1번
+            function deleteComment(id) {
+
+                // 댓글 삭제 확인하기 -> 취소 -> 함수 끝
+                // 1번
+                if(!confirm("해당 댓글을 삭제할까요?")) { 
+                    return false;
+                }
+
+                const postId = [[ ${post.id} ]];
+
+                $.ajax({
+                    url : `/posts/${postId}/comments/${id}`,
+                    type : 'delete',
+                    dataType : 'json',
+                    async : false,
+                    success :function (response) {
+                        alert("댓글이 삭제되었습니다.");
+                        findAllComment();
+                    },
+                    error : function(request, status, error) {
+                        console.log("request : " + request.responseText + "\n" 
+                                    + "status : " + status + "\n" 
+                                    + "error : " + error);
+                    }
+                })
+            }
+
+
+            // 2번
+            /* function deleteComment(id) {
+                if(confirm("해당 댓글을 삭제할까요?")) { 
+                    
+                    const postId = [[ ${post.id} ]];
+
+                    $.ajax({
+                        url : `/posts/${postId}/comments/${id}`,
+                        type : 'delete',
+                        dataType : 'json',
+                        async : false,
+                        success :function (response) {
+                            alert("댓글이 삭제되었습니다.");
+                            findAllComment();
+                        },
+                        error : function(request, status, error) {
+                            console.log("request : " + request + "\n" 
+                                        + "status : " + status + "\n" 
+                                        + "error : " + error);
+                        }
+                    })
+                }
+            } */
 
 
 

@@ -45,7 +45,11 @@ public class CommentController {
         return commentService.findCommentById(id);
     }
 
-
-    
+    // 댓글 삭제
+    @DeleteMapping("/posts/{postId}/comments/{id}")
+    public Long deleteComment(@PathVariable Long postId,
+                              @PathVariable Long id) {
+        return commentService.deleteComment(id);
+    }
 
 }
