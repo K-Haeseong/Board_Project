@@ -6,13 +6,13 @@ import lombok.Getter;
 @Getter
 public class Pagination {
 
-    private int totalRecordCount; // 전체 게시글 수
-    private int totalPageCount; // 전체 페이지 수
-    private int startPage; // 해당 페이지의 첫 페이지
-    private int endPage; // 해당 페이지의 끝 페이지
-    private int limitStart; // Limit 시작 위치
-    private boolean existPrevPage; // 이전 페이지 유무
-    private boolean existNextPage; // 다음 페이지 유무
+    private int totalRecordCount;   // 전체 게시글 수
+    private int totalPageCount;     // 전체 페이지 수
+    private int startPage;          // 해당 페이지의 첫 페이지
+    private int endPage;            // 해당 페이지의 끝 페이지
+    private int limitStart;         // Limit 시작 위치
+    private boolean existPrevPage;  // 이전 페이지 유무
+    private boolean existNextPage;  // 다음 페이지 유무
 
     public Pagination(int totalRecordCount, SearchDto params) {
         if (totalRecordCount > 0) {
@@ -38,7 +38,7 @@ public class Pagination {
         // 끝 페이지 번호 계산
         endPage = startPage + params.getPageSize() - 1;
 
-        // 끝 페이지가 전체 페이지 수보다 큰 경우, 끝 페이지 전체 페이지 수 저장
+        // 끝 페이지가 전체 페이지 수보다 큰 경우, 전체 페이지 수가 끝 페이지가 되도록 저장
         if (endPage > totalPageCount) {
             endPage = totalPageCount;
         }

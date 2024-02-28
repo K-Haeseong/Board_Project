@@ -1,9 +1,14 @@
 package com.study.domain.comment;
 
+import com.fasterxml.jackson.databind.introspect.TypeResolutionContext;
+import com.study.common.paging.Pagination;
+import com.study.common.paging.PagingResponse;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.thymeleaf.expression.Lists;
 
+import java.util.Collections;
 import java.util.List;
 
 @Service
@@ -56,8 +61,18 @@ public class CommentService {
     }
 
     /* 댓글 목록 조회 */
-    public List<CommentResponse> findAllComment(Long postId) {
-        return commentMapper.findAll(postId);
+    public PagingResponse<CommentResponse> findAllComment(CommentSearchDto params) {
+
+        int totalCount = commentMapper.count(params);
+
+        if( totalCount < 1 ) {
+            return new PagingResponse<>(Collections.emptyList(), null);
+        }
+
+        Pagination pagination = new Pagination(totalCount, params);
+        params.setPagination(pagination);
+        List<CommentResponse> list = commentMapper.findAll(params);
+        return new PagingResponse<>(list, pagination);
     }
 
 }

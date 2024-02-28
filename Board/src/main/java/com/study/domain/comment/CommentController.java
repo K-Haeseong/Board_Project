@@ -1,5 +1,6 @@
 package com.study.domain.comment;
 
+import com.study.common.paging.PagingResponse;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.*;
 
@@ -21,13 +22,16 @@ public class CommentController {
 
     }
 
+
     // 댓글 목록 조회
     @GetMapping("/posts/{postId}/comments")
-    public List<CommentResponse> findAllComment(@PathVariable Long postId) {
+    public PagingResponse<CommentResponse> findAllComment(@PathVariable Long postId,
+                                         @ModelAttribute CommentSearchDto params) {
 
-        return commentService.findAllComment(postId);
+        return commentService.findAllComment(params);
 
     }
+
 
     // 댓글 상세정보 조회
     @GetMapping("/posts/{postId}/comments/{id}")
@@ -35,6 +39,7 @@ public class CommentController {
                                            @PathVariable Long id) {
         return commentService.findCommentById(id);
     }
+
 
     // 댓글 수정
     @PatchMapping("/posts/{postId}/comments/{id}")
@@ -44,6 +49,7 @@ public class CommentController {
         commentService.updateComment(params);
         return commentService.findCommentById(id);
     }
+
 
     // 댓글 삭제
     @DeleteMapping("/posts/{postId}/comments/{id}")

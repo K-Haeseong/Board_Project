@@ -21,9 +21,9 @@ public interface CommentMapper {
     void deleteById(Long id);
 
     /* 댓글 목록 조회 */
-    List<CommentResponse> findAll(Long postId);
+    List<CommentResponse> findAll(CommentSearchDto params);
 
     /* 댓글 수 계산 */
-    int count(Long postId);
+    int count(CommentSearchDto params);
 
 }
