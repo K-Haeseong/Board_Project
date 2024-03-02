@@ -117,7 +117,8 @@
 
             function findAllComment(page) {
 
-                page = (page) ? page : 1;
+                const uriPage = new URLSearchParams(location.search).get("page");
+                page = (page) ? page : (uriPage) ? uriPage : 1;
                 const postId = [[ ${post.id}]]
 
                 const params = {
@@ -221,17 +222,24 @@
                 document.getElementsByClassName("cm_paging")[0].innerHTML = html;
                 const btns = Array.from(document.querySelectorAll(".cm_paging > button"));
                 
+                let currentPage = '';
+
                 btns.some( btn => {
                     if(Number(btn.textContent) === page) {
                         btn.disabled = true;
+                        currentPage = Number(btn.textContent);
                         return true;
                     } 
 
                     if( Number(btn.textContent) === pagination.totalPageCount) {
+                        currentPage = Number(btn.textContent);
                         btn.disabled = true;
                     }
                 })
 
+                // 페이지 URI 강제 변경
+                const postId = new URLSearchParams(location.search).get("id");
+                history.replaceState({}, '', location.pathname + `?id=${postId}&page=${currentPage}`)
             }
 
             // 댓글 길이 카운팅
