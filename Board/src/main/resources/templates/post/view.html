@@ -117,9 +117,12 @@
 
             function findAllComment(page) {
 
-                const uriPage = new URLSearchParams(location.search).get("page");
-                page = (page) ? page : (uriPage) ? uriPage : 1;
+                let uriPage = new URLSearchParams(location.search).get("page");
+                uriPage = Number(uriPage)
+                console.log("uriPage : ", uriPage)
+                page = (page) ? page : (uriPage) ? uriPage : 1
                 const postId = [[ ${post.id}]]
+                console.log("page : ", page)
 
                 const params = {
                     postId : postId,
@@ -183,6 +186,9 @@
 
             function drawPage(pagination, page) {
 
+                const type = page.type;
+                console.log("page : ", page , "type : ", type)
+
                 if(!pagination || !page) {
                     document.getElementsByClassName("cm_paging")[0].innerHTML = "";
                     throw new Error("Missing required parameter.", pagination, page);
@@ -239,7 +245,7 @@
 
                 // 페이지 URI 강제 변경
                 const postId = new URLSearchParams(location.search).get("id");
-                history.replaceState({}, '', location.pathname + `?id=${postId}&page=${currentPage}`)
+                history.replaceState({}, '', location.pathname + `?id=${postId}&page=${currentPage}`);
             }
 
             // 댓글 길이 카운팅
