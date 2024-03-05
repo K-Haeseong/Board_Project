@@ -174,12 +174,11 @@
 
             function findAllComment(page) {
 
-                const currentPage = document.querySelector(".paging a.on");
+                // const currentPage = document.querySelector(".paging a.on");
+                // page = (page) ? page : (currentPage ? Number(currentPage.text) : 1);
 
-                // let uriPage = new URLSearchParams(location.search).get("page");
-                // uriPage = Number(uriPage)
-
-                page = (page) ? page : (currentPage ? Number(currentPage.text) : 1);
+                const uriPage = new URLSearchParams(location.search).get("page");
+                page = (page) ? page : (uriPage ? Number(uriPage) : 1);
 
                 const postId = [[ ${post.id}]]
 
@@ -204,7 +203,7 @@
                 // 조회된 댓글이 없을 경우
                 if(!list.length) {
                     document.querySelector('.cm_list').innerHTML =
-                    `<div class="cm_none">등록된 댓글이 없습니다.</div>`
+                    `<div class="cm_none"><p>등록된 댓글이 없습니다.</p></div>`
                     return false;
                 }
 
@@ -235,12 +234,9 @@
             // 댓글 페이지네이션
             function drawPage(pagination, page) {
 
-                const type = page.type;
-                console.log("page : ", page , "type : ", type)
-
                 if(!pagination || !page) {
                     document.querySelector(".paging").innerHTML = "";
-                    throw new Error("Missing required parameter.", pagination, page);
+                    throw new Error("Missing required parameter");
                 }
 
                 let html = "";
@@ -277,17 +273,17 @@
                 }
 
                 // 댓글 페이지네이션 영역에 렌더링
-                const paging = document.querySelector("paging");
+                const paging = document.querySelector(".paging");
                 paging.innerHTML = html;
                 
                 // Array의 find : 검사를 위해 전달받은 함수를 만족하는 배열 요소의 값을 반환함. 만족하는 값이 없으면 undefined를 반환함.
-                const currentPage = Array.from(paging.uerySelectorAll('a')).find(a => Number(a.text) === page || Number(a.text) === pagination.totalPageCount);
+                const currentPage = Array.from(paging.querySelectorAll("a")).find(a => Number(a.text) === page || Number(a.text) === pagination.totalPageCount);
                 currentPage.classList.add("on");
                 currentPage.removeAttribute("onclick");
 
                 // 페이지 URI 강제 변경
-                // const postId = new URLSearchParams(location.search).get("id");
-                // history.replaceState({}, '', location.pathname + `?id=${postId}&page=${currentPage}`);
+                const postId = new URLSearchParams(location.search).get("id");
+                history.replaceState({}, '', location.pathname + `?id=${postId}&page=${currentPage.text}`);
             }
 
 
@@ -480,8 +476,6 @@
                         ${inputHtml}
                     </form>
                 `;
-
-                console.log("formHtml : ", formHTML);
 
                 const doc = new DOMParser().parseFromString(formHTML, 'text/html');
                 const form = doc.body.firstChild;
