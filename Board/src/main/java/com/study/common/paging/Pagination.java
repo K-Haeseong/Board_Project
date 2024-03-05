@@ -18,6 +18,10 @@ public class Pagination {
         if (totalRecordCount > 0) {
             this.totalRecordCount = totalRecordCount;
             calculation(params);
+            // Service 클래스의 findAll 메서드 내 params.setPagination(pagination); 코드
+            // 페이지네이션에서 공통으로 처리
+            // 코드 리펙토링
+            params.setPagination(this);
         }
     }
 
