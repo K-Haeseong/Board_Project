@@ -29,7 +29,7 @@ public class Pagination {
 
         // 전체 페이지 수 계산
         totalPageCount = ((totalRecordCount - 1) / params.getRecordSize()) + 1;
-//        totalPageCount = (totalRecordCount % params.getRecordSize()) == 0 ? totalPageCount : totalPageCount + 1;
+        // totalPageCount = (totalRecordCount % params.getRecordSize()) == 0 ? totalPageCount : totalPageCount + 1;
 
         // 현재 페이지 번호가 전체 페이지 수보다 큰 경우, 현재 페이지 번호에 전체 페이지 수 저장
         if(params.getPage() > totalPageCount) {
