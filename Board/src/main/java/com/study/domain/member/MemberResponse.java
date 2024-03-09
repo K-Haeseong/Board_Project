@@ -18,6 +18,7 @@ public class MemberResponse {
     private LocalDateTime createdDate;  // 생성일자
     private LocalDateTime modifiedDate; // 수정일자
 
+    // 비밀번호 초기화
     public void clearPassword() {
         this.password = "";
     }

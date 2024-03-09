@@ -1,0 +1,60 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "https://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.study.domain.member.MemberMapper">
+
+    <!-- tb_member 테이블 전체 컬럼 -->
+    <sql id="memberColumns">
+        id
+        , login_id
+        , password
+        , name
+        , gender
+        , birthday
+        , delete_yn
+        , created_date
+        , modified_date
+    </sql>
+
+    <!-- 회원 정보 저장 -->
+    <insert id="save" parameterType="com.study.domain.member.MemberRequest">
+        insert into tb_member
+        (
+            <include refid="memberColumns" />
+        )
+        values
+        (
+            #{id}
+            , #{login_id}
+            , #{password}
+            , #{name}
+            , #{gender}
+            , #{birthday}
+            , 0
+            , now()
+            , null
+        )
+    </insert>
+
+    <!-- 회원 수 세기(회원 중복 체크)-->
+    <select id="countByLoginId" parameterType="String" resultType="int">
+        select
+            count(*)
+        from
+            tb_comment
+        where
+            login_id = #{loginId}
+    </select>
+
+    <!-- 회원 상세 정보 -->
+    <select id="findByLonginId" parameterType="string" resultType="com.study.domain.member.MemberResponse">
+        select
+            <include refid="memberColumns" />
+        from
+            tb_member
+        where
+            delete_yn = 0,
+            and
+            login_id = #{loginId}
+    </select>
+
+</mapper>
