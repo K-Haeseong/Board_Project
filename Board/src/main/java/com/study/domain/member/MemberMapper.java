@@ -7,7 +7,7 @@ import org.apache.ibatis.annotations.Param;
 public interface MemberMapper {
 
     /* 회원 정보 저장(회원가입) */
-    void save(@Param("params") MemberRequest params);
+    void save(MemberRequest params);
 
     /* ID 중복 체크(회원 수 확인) */
     int countByLoginId(String loginId);

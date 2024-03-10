@@ -3,7 +3,6 @@ package com.study.domain.comment;
 import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
-import lombok.Setter;
 
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED) // 같은 패키지의 클래스와 상속받은 클래스에서 생성자에 접근 가능

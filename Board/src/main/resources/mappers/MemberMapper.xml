@@ -16,7 +16,7 @@
     </sql>
 
     <!-- 회원 정보 저장 -->
-    <insert id="save" parameterType="com.study.domain.member.MemberRequest">
+    <insert id="save" parameterType="com.study.domain.member.MemberRequest" keyProperty="id" useGeneratedKeys="true">
         insert into tb_member
         (
             <include refid="memberColumns" />
@@ -24,7 +24,7 @@
         values
         (
             #{id}
-            , #{login_id}
+            , #{loginId}
             , #{password}
             , #{name}
             , #{gender}
@@ -40,7 +40,7 @@
         select
             count(*)
         from
-            tb_comment
+            tb_member
         where
             login_id = #{loginId}
     </select>

@@ -89,7 +89,7 @@
 						</tr>
 						<tr>
 							<th scope="row">생년월일<span class="es">필수 입력</span></th>
-							<td><input type="number" name="birthday" placeholder="숫자 8자리 입력" /></td>
+							<td><input type="number" name="birthday" placeholder="숫자 8자리 입력(- 제외)" /></td>
 						</tr>
 					</tbody>
 				</table>
@@ -110,15 +110,15 @@
 
 		// 회원가입 팝업 open
 		function openSignupPopup() {
-            layerPop("signupPopup");
+            layerPop('signupPopup');
         }
 
 
 		// 회원가입 팝업 close
 		function closeSignupPopup() {
             const form = document.getElementById("signupForm");
-            // form.loginId.readOnly = false;
-			// form.querySelector('#idCheckBtn').disabled = false;
+            form.loginId.readOnly = false;
+			form.querySelector('#idCheckBtn').disabled = false;
 			form.reset();
             layerPopClose();
         }
@@ -126,63 +126,106 @@
 
 		// 아이디 중복 체크
 		function checkLoginId() {
-			const loginId = document.querySelector('#signupForm input[name="loginId"]');
-			isValid(loginId, '아이디');
-			const count = getJson(`/member-count`, { loginId : loginId.value });
-
-			if (count > 0) {
-				alert('이미 가입된 아이디가 있습니다.');
-				loginId.focus();
-				return false;
+			const loginId = document.querySelector("#signupForm input[name=loginId]")
+			isValid(loginId, "아이디");
+			
+			const params = {
+				loginId : loginId.value
 			}
 
-			if (confirm('사용 가능한 아이디입니다.\n입력하신 아이디로 결정하시겠어요?')) {
-				loginId.readOnly = true;
-				document.getElementById('idCheckBtn').disabled = true;
-			}
-		}
+			$.ajax({
+				url : "/member-count",
+				method : "get",
+				dataType : "json",
+				data : params,
+				async : false,
+				success : function(response) {
+					if(response > 0) {
+						alert("이미 등록된 아이디 입니다.");
+						loginId.focus();
+						return false;
+					}
+					if(confirm("사용 가능한 아이디입니다." + "\n" + "현재 아이디를 사용하시겠습니까?" )) {
+						loginId.readOnly = true;
+						document.getElementById('idCheckBtn').disabled = true;
+					}
+				},
+				error : function(request, status, error) {
+					console.log("request : " + request.responseText + "\n" 
+								+ "status : " + status + "\n" 
+								+ "error : " + error);
+				}
+			})
+        }
 
 
 		// 회원 정보 유효성 검사
 		function validationMemberInfo(form) {
-
-			const fields = form.querySelectorAll('input:not([type="radio"])');
-			const fieldNames = ['아이디', '비밀번호', '빕밀번호 재입력', '이름', '생년월일'];
-
-			for (let i = 0, len = fields.length; i < len; i++) {
+			const fields = form.querySelectorAll("input:not([type=radio])");
+			const fieldNames = ["아이디", "비밀번호", "비밀번호 재입력", "이름", "생년월일"];
+			
+			for( let i = 0; i < fields.length; i++) {
 				isValid(fields[i], fieldNames[i]);
 			}
 
-			if (form.loginId.readOnly === false) {
-				alert('아이디 중복 체크를 완료해 주세요.');
-				throw new Error();
+			// 중복 체크 진행 여부 
+			if(form.loginId.readOnly === false) {
+				alert("아이디 중복을 체크해주세요.");
+				form.loginId.focus();
+				throw new Error("아이디 중복");
 			}
 
-			if (form.password.value !== form.passwordCheck.value) {
-				alert('비밀번호가 일치하지 않습니다.');
+			// 비밀번호 일치 여부
+			if(form.password.value !== form.passwordCheck.value) {
+				alert("비밀번호가 서로 일치 하지 않습니다.")
 				form.passwordCheck.focus();
-				throw new Error();
+				throw new Error("비밀번호 불일치");
+			}
+
+			// 이름 형식 체크
+			if(!(/^[가-힣]{1,10}$/.test(form.name.value))) {
+				alert("이름을 다시 입력해주세요.");
+				form.name.focus();
+				throw new Error("이름 형식 불일치");
+			}
+
+			// 생년월일 형식 체크
+			if( !(/^(19|20)\d\d(0[1-9]|1[0-2])(0[1-9]|[12][0-9]|3[01])$/.test(form.birthday.value)) ) {
+				alert("생년월일 형식에 맞는 숫자 8자를 입력해주세요.");
+				form.birthday.focus();
+				throw new Error("생년월일 형식 불일치");
 			}
 		}
 
 
 		// 회원 정보 저장 (회원가입)
 		function saveMember() {
-
-			// 1. 필드 유효성 검사
-			const form = document.getElementById('signupForm');
+			const form = document.getElementById("signupForm");
 			validationMemberInfo(form);
 
-			// 2. 파라미터 세팅
-			const params = {}
+			const params = {};
 			new FormData(form).forEach((value, key) => params[key] = value.trim());
-			params.birthday = params.birthday.replace(/(\d{4})(\d{2})(\d{2})/g, '$1-$2-$3');
+			params.birthday = params.birthday.replace(/(\d{4})(\d{2})(\d{2})/, '$1-$2-$3');
 
-			// 3. Save API 호출
-			callApi('/members', 'post', params);
-			alert('가입을 축하드립니다!\n로그인 후 서비스를 이용해 주세요.');
-			closeSignupPopup();
+			$.ajax({
+				url : "/members",
+				method : "post",
+				dataType : "json",
+				contentType : "application/json; charset=utf-8",
+				data : JSON.stringify(params),
+				async : false,
+				success : function(response) {
+					alert("회원가입이 완료 되었습니다."  + "\n" + "로그인 후 이용 바랍니다.")
+					closeSignupPopup();
+				},
+				error : function(request, status, error) {
+					console.log("request : " + request.responseText + "\n" 
+								+ "status : " + status + "\n" 
+								+ "error : " + error);
+				}
+			})
 		}
+		
 		
 
 	</script>

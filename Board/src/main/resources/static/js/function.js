@@ -21,10 +21,10 @@ function isValid(target, fieldName, focusTarget) {
     }
 
     const particle = (hasCoda(fieldName)) ? '을' : '를'; // 조사
-    const elementType = (target.type === 'text' || target.type === 'password' || target.type === 'search' || target.type === 'textarea') ? '입력' : '선택';
+    const elementType = (target.type === 'text' || target.type === 'password' || target.type === 'search' || target.type === 'textarea' || target.type === 'number') ? '입력' : '선택';
     alert( `${fieldName + particle} ${elementType}해 주세요.` );
 
     target.value = '';
     ( !focusTarget ? target : focusTarget).focus();
-    throw new Error(`"${target.id}" is required...`)
+    throw new Error(`"${target.id}" is required`)
 }
