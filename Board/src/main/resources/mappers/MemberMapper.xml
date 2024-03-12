@@ -36,7 +36,7 @@
     </insert>
 
     <!-- 회원 수 세기(회원 중복 체크)-->
-    <select id="countByLoginId" parameterType="String" resultType="int">
+    <select id="countByLoginId" parameterType="string" resultType="int">
         select
             count(*)
         from

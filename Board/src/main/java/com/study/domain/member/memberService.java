@@ -15,8 +15,8 @@ public class memberService {
     /* 회원 정보 저장(회원가입) */
     @Transactional
     public Long saveMember(MemberRequest params) {
+        params.encodingPassword(passwordEncoder);
         memberMapper.save(params);
-        passwordEncoder.encode(params.getPassword());
         return params.getId();
     }
 
@@ -28,5 +28,23 @@ public class memberService {
     /* 회원 수 세기(중복체크) */
     public int countMemberByLoginId(String loginId) {
         return memberMapper.countByLoginId(loginId);
+    }
+
+
+    // 로그인
+    public MemberResponse login(final String loginId, final String password) {
+
+        // 1. 회원 정보 및 비밀번호 조회
+        MemberResponse member = findMemberByLoginId(loginId);
+        String encodedPassword = (member == null) ? "" : member.getPassword();
+
+        // 2. 회원 정보 및 비밀번호 체크
+        if (member == null || passwordEncoder.matches(password, encodedPassword) == false) {
+            return null;
+        }
+
+        // 3. 회원 응답 객체에서 비밀번호를 제거한 후 회원 정보 리턴
+        member.clearPassword();
+        return member;
     }
 }
