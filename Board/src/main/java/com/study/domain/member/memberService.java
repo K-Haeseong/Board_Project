@@ -32,19 +32,21 @@ public class memberService {
 
 
     // 로그인
-    public MemberResponse login(final String loginId, final String password) {
+    public MemberResponse login(String loginId, String password) {
 
-        // 1. 회원 정보 및 비밀번호 조회
+        // 회원 정보 및 비밀번호 조회
         MemberResponse member = findMemberByLoginId(loginId);
         String encodedPassword = (member == null) ? "" : member.getPassword();
 
-        // 2. 회원 정보 및 비밀번호 체크
-        if (member == null || passwordEncoder.matches(password, encodedPassword) == false) {
+        // 회원 정보 및 비밀번호 체크
+        if ( member == null || passwordEncoder.matches(password, encodedPassword)) {
             return null;
         }
 
-        // 3. 회원 응답 객체에서 비밀번호를 제거한 후 회원 정보 리턴
         member.clearPassword();
         return member;
+
     }
+
+
 }

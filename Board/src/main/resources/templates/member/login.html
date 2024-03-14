@@ -34,7 +34,7 @@
 								<input type="password" id="password" name="password" title="비밀번호" placeholder="비밀번호" />
 							</li>
 						</ul>
-						<!-- <button type="button" onclick="login();" class="login_btn">로그인</button> -->
+						<button type="button" onclick="login();" class="login_btn">로그인</button>
 						<button type="button" onclick="openSignupPopup();" class="signup_btn">회원가입</button>
 					</form>
 				</div>
@@ -225,6 +225,47 @@
 				}
 			})
 		}
+
+		// Enter 입력 시 로그인 이벤트
+		window.onload = () => {
+			document.querySelectorAll('#loginId, #password').forEach(element => { 
+				element.addEventListener('keyup', (e) => {
+					if (e.keyCode === 13) {
+						login();
+					}
+				})
+			})
+		}
+
+		// 로그인
+		function login() {
+
+		const form = document.getElementById('loginForm');
+
+			if ( !form.loginId.value || !form.password.value ) {
+				alert('아이디와 비밀번호를 모두 입력해 주세요.');
+				form.loginId.focus();
+				return false;
+			}
+
+			$.ajax({
+				url : '/login',
+				method : 'POST',
+				dataType : 'json',
+				data : {
+					loginId: form.loginId.value,
+					password: form.password.value
+				},
+				async : false,
+				success : function (response) {
+					location.href = '/post/list';
+				},
+				error : function (request, status, error) {
+					alert('아이디와 비밀번호를 확인해 주세요.');
+				}
+			})
+		}
+
 		
 		
 
