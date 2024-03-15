@@ -39,7 +39,7 @@ public class memberService {
         String encodedPassword = (member == null) ? "" : member.getPassword();
 
         // 회원 정보 및 비밀번호 체크
-        if ( member == null || passwordEncoder.matches(password, encodedPassword)) {
+        if ( member == null || passwordEncoder.matches(password, encodedPassword) == false) {
             return null;
         }
 
