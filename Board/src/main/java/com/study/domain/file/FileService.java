@@ -14,6 +14,7 @@ public class FileService {
 
     private final FileMapper fileMapper;
 
+    /* 파일 저장 */
     @Transactional
     public void saveFiles(Long postId, List<FileRequest> files) {
         if(CollectionUtils.isEmpty(files)) {
