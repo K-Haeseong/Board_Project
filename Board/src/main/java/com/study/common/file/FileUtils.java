@@ -18,8 +18,11 @@ import java.util.UUID;
 @Component
 public class FileUtils {
 
-    private final String uploadPath = Path.of("C:", "work", "upload-files").toString();
-
+    private final String uploadPath = Path.of("C:", "Work", "upload-files").toString();
+    // uploadPath의 상태 유지를 위해 파일유틸클래스의 등록 방식을 static이 아닌 Bean으로 등록
+    // application.properties에서 경로를 설정 하지 않고 여기서 설정한 이유
+    //  -> OS에 따라 경로 구분자가 다르기 때문에, OS에 독립적인 파일 경로를 생성 하기 위해서이다.
+    // Path.of 설정시 대소문자 구분 X
 
     /* 다중 파일 업로드 */
     public List<FileRequest> uploadFiles(List<MultipartFile> multipartFiles) {

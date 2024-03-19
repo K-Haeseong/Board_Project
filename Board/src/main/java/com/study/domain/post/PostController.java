@@ -38,9 +38,9 @@ public class PostController {
     // 신규 게시글 생성
     @PostMapping("/post/save")
     public String savePost(PostRequest params, Model model) {
-        Long id = postService.savePost(params);
-        List<FileRequest> files = fileUtils.uploadFiles(params.getFiles());
-        fileService.saveFiles(id, files);
+        Long id = postService.savePost(params);                                 // 게시글 저장
+        List<FileRequest> files = fileUtils.uploadFiles(params.getFiles());     // 디스크에 파일 업로드
+        fileService.saveFiles(id, files);                                       // 업로드 된 파일 정보 DB에 저장
         MessageDto message = new MessageDto("게시글 생성이 완료되었습니다.", "/post/list", RequestMethod.GET, null);
         return showMessageAndRedirect(message, model);
     }

@@ -12,7 +12,7 @@
 
         <div class="content">
             <section>
-                <form id="saveForm" method="post" autocomplete="off">
+                <form id="saveForm" method="post" autocomplete="off" enctype="multipart/form-data">
                     <!--/* 게시글 수정인 경우, 서버로 전달할 게시글 번호 */-->
                     <input type="hidden" id="id" name="id" th:if="${post != null}" th:value="${post.id}" />
 
@@ -45,6 +45,24 @@
                             <th>내용 <span class="es">필수 입력</span></th>
                             <td colspan="3"><textarea id="content" name="content" cols="50" rows="10" placeholder="내용을 입력해 주세요."></textarea></td>
                         </tr>
+                        <tr>
+                            <th>첨부파일</th>
+                            <td colspan="3">
+                                <div class="file_list">
+                                    <div>
+                                        <div class="file_input">
+                                            <input type="text" readonly />
+                                            <label> 첨부파일
+                                                <!-- onchange : 파일 선택 창에서 파일을 선택 or 취소 할 때 -->
+                                                <input type="file" name="files" onchange="selectFile(this);" />
+                                            </label>
+                                        </div>
+                                        <button type="button" onclick="removeFile(this);" class="btns del_btn"><span>파일 삭제</span></button>
+                                        <button type="button" onclick="addFile();" class="btns fn_add_btn"><span>파일 추가</span></button>
+                                    </div>
+                                </div>
+                            </td>
+                        </tr>
                         </tbody>
                     </table>
                 </form>
@@ -76,10 +94,8 @@
                     }
 
                     const form = document.getElementById('saveForm');
-                    // console.log("form : ", form);
                     const fields = ['id', 'title', 'content', 'writer', 'noticeYn'];
                     form.isNotice.checked = post.noticeYn;
-                    // console.log("post.createdDate : ", post.createdDate);
                     form.createdDate.value = dayjs(post.createdDate).format('YYYY-MM-DD HH:mm');
 
                     fields.forEach(field => {
@@ -101,7 +117,7 @@
                 function savePost() {
                     const form = document.getElementById('saveForm');
 
-                    // 유효성 검사하는 부분 (나중에)
+                    // 유효성 검사하는 부분(중요)
                     const fields = [form.title, form.writer, form.content];
                     const fieldNames = ['제목', '이름', '내용'];
 
@@ -134,6 +150,77 @@
                     // const queryString = new URLSearchParams(location.search).delete('id');
                     location.href = "/post/list" + "?" + queryString.toString();
                 }
+
+
+                /* 파일 관련 */
+
+                // 파일 선택
+                function selectFile(element) {
+
+                    const file = element.files[0];
+                    const filename = element.closest('.file_input').firstElementChild;
+                    // element 대신 class or id 적용 하려 했으나, 파일 추가 되면 같은 class or id가 중복으로 생성
+
+                    // 파일 선택 창에서 취소 버튼 클릭
+                    if ( !file ) {
+                        filename.value = '';
+                        return false;
+                    }
+
+                    // 파일 크기가 10MB 초과 : file.size는 byte
+                    // 1024Byte -> 1KB
+                    // 1024KB -> 1MB
+                    const fileSize = Math.floor(file.size / 1024 / 1024);
+                    if (fileSize > 10) {
+                        alert("파일 크기가 10MB를 초과하였습니다.");
+                        filename.value = '';
+                        element.value = '';
+                        return false;
+                    }
+
+                    // 파일명 지정
+                    filename.value = file.name;
+                }
+
+
+                // 파일 추가
+                function addFile() {
+
+                    const fileDiv = document.createElement('div');
+
+                    fileDiv.innerHTML =
+                    `
+                    <div class="file_input">
+                        <input type="text" readonly />
+                        <label> 첨부파일
+                            <input type="file" name="files" onchange="selectFile(this);" />
+                        </label>
+                    </div>
+                    <button type="button" onclick="removeFile(this);" class="btns del_btn"><span>해당 파일 삭제</span></button>
+                    `;
+                    document.querySelector('.file_list').appendChild(fileDiv);
+                }
+
+                // 파일 삭제
+                function removeFile(element) {
+
+                    const fileAddBtn = element.nextElementSibling;
+                    
+                    // 첫번째 파일 삭제
+                    // -> 요소를 삭제 하지 않고 내부의 값만 초기화
+                    if(fileAddBtn) {
+                        const inputs = element.previousElementSibling.querySelectorAll('input');
+                        inputs.forEach( input => input.value ='') 
+                        return false;
+                    }
+
+                    // 해당 파일 삭제 클릭
+                    //  -> 추가 생성된 요소 자체를 삭제
+                    element.parentElement.remove();
+                }
+
+
+
 
             /*]]>*/
         </script>
