@@ -10,4 +10,10 @@ public interface FileMapper {
     /* 파일 정보 저장 */
     void saveAll(List<FileRequest> files);
 
+    /* 파일 목록 조회(By PostId) */
+    List<FileResponse> findAllByPostId(Long postId);
+
+    /* 파일 목록 조회(By Id) */
+    List<FileResponse> findAllByIds(List<Long> ids);
+
 }
