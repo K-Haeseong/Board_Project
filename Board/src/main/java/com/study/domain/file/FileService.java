@@ -39,4 +39,12 @@ public class FileService {
         return fileMapper.findAllByIds(ids);
     }
 
+    /* 파일 삭제 */
+    public void deleteAllFileByIds(List<Long> ids) {
+        if( CollectionUtils.isEmpty(ids) ) {
+            return;
+        }
+        fileMapper.deleteAllByIds(ids);
+    }
+
 }

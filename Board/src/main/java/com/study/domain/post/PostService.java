@@ -52,6 +52,7 @@ public class PostService {
      * param - id
      * return - id
      * */
+    @Transactional
     public Long deletePost(Long id) {
         postMapper.deleteById(id);
         return id;

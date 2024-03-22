@@ -63,5 +63,22 @@
             id
     </select>
 
+    <!-- 파일 삭제(By ids) -->
+    <delete id="deleteAllByIds" parameterType="list">
+        update
+            tb_file
+        set
+              delete_yn = 1
+            , deleted_date = now()
+        where
+            id in
+            <foreach collection="list" item="id" open="(" close=")" separator=",">
+                #{id}
+            </foreach>
+    </delete>
+
+
+
+
 
 </mapper>

@@ -18,6 +18,9 @@
 
                     <!--/* 서버로 전달할 공지글 여부 */-->
                     <input type="hidden" id="noticeYn" name="noticeYn" />
+
+                    <!--/* 삭제 처리할 파일 번호 */-->
+                    <input type="hidden" id="removeFileIds" name="removeFileIds" />
                     <table class="tb tb_row">
                         <colgroup>
                             <col style="width:15%;" /><col style="width:35%;" /><col style="width:15%;" /><col style="width:35%;" />
@@ -81,6 +84,8 @@
 
                 window.onload = () => {
                     renderPostInfo();
+
+                    findAllFile();
                 }
 
                 // 게시글 상세정보 렌더링
@@ -137,6 +142,7 @@
 
                     document.getElementById('saveBtn').disabled = true;
                     form.noticeYn.value = form.isNotice.checked;
+                    form.removeFileIds.value = removeFileId.getAll.join();
                     form.action = [[ ${post == null} ]] ? '/post/save' : '/post/update';
                     form.submit();
                 }
@@ -154,8 +160,25 @@
 
                 /* 파일 관련 */
 
+                // 파일 삭제 처리용 익명 함수
+                const removeFileId = (function() {
+                    const ids = [];
+                    return {
+                        add(id) {
+                            if (ids.includes(id)) {
+                                return false;
+                            }
+                            ids.push(id);
+                        },
+                        getAll() {
+                            return ids;
+                        }
+                    }
+                }());
+
+
                 // 파일 선택
-                function selectFile(element) {
+                function selectFile(element, id) {
 
                     const file = element.files[0];
                     const filename = element.closest('.file_input').firstElementChild;
@@ -180,6 +203,11 @@
 
                     // 파일명 지정
                     filename.value = file.name;
+
+                    // 삭제할 파일 id 추가 - 변경 되기 전 파일은 디스크에서 지워져야 하기 때문에
+                    if(id) {
+                        removeFile.add(id);
+                    }
                 }
 
 
@@ -202,7 +230,12 @@
                 }
 
                 // 파일 삭제
-                function removeFile(element) {
+                function removeFile(element, id) {
+
+                    // 삭제할 파일 id 추가(디스크에서 삭제 하기 위해서)
+                    if(id) {
+                        removeFileId.add(id);
+                    }
 
                     const fileAddBtn = element.nextElementSibling;
                     
@@ -220,6 +253,55 @@
                 }
 
 
+                // 첨부파일 조회
+                function findAllFile() {
+
+                    // 신규 게시글 등록 / 수정 확인
+                    const post = [[${post}]];
+                    if( !post ) {
+                        return false;
+                    }
+
+                    // 수정시 첨부파일 목록 조회
+                    let json = {};
+
+                    $.ajax ({
+                        url : `/posts/${post.id}/files`,
+                        method : 'get',
+                        dataType : 'json',
+                        async : false,
+                        success : function(response) {
+                            json = response;
+                        },
+                        error : function(request, status, error) {
+                        console.log("request : " + request + "\n" 
+                                    + "status : " + status + "\n" 
+                                    + "error : " + error);
+                        }                        
+                    })
+
+                    // 조회를 통해 넘어온 FileResponse 목록
+                    const response = json;
+
+                    if( !response.length ) {
+                        return false;
+                    }
+
+                    // 첨부파일 영역 추가
+                    for(let i = 0; i = response.length-1; i++) {
+                        addFile();
+                    }
+
+                    // 첨부파일 정보 렌더링
+                    const fileOriginalNameInputs = document.querySelectorAll('.file_list input[type="text"]');
+                    fileOriginalNameInputs.forEach( (input, i) => {
+                        const fileInput = input.nextElementSibling.firstElementChild;
+                        const fileRemoveBtn = input.parentElement.nextElementSibling;
+                        fileInput.setAttribute('onchange', `selectFile(this, ${response[i].id})` );
+                        fileRemoveBtn.setAttribute('onclick', `removeFile(this, ${response[i].id})`);
+                        input.value = response[i].originalName;
+                    })
+                }
 
 
             /*]]>*/

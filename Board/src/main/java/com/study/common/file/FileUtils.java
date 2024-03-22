@@ -1,8 +1,10 @@
 package com.study.common.file;
 
 import com.study.domain.file.FileRequest;
+import com.study.domain.file.FileResponse;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
+import org.springframework.util.CollectionUtils;
 import org.springframework.util.StringUtils;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -12,6 +14,7 @@ import java.nio.file.Path;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import java.util.UUID;
 
@@ -81,10 +84,12 @@ public class FileUtils {
         return makeDirectories(uploadPath);
     }
 
+
     /* 경로 추가 후 업로드 경로 반환 */
     private String getUploadPath(String addPath) {
         return makeDirectories(uploadPath + File.separator + addPath);
     }
+
 
     /* 업로드 폴더 생성 */
     private String makeDirectories(String path) {
@@ -94,5 +99,33 @@ public class FileUtils {
         }
         return dir.getPath();
     }
+
+
+    /* 다중 파일 삭제 (From Disk) */
+    public void deleteFiles(List<FileResponse> files) {
+        if( CollectionUtils.isEmpty(files) ) {
+            return;
+        }
+        for(FileResponse file : files) {
+            String uploadDate = file.getCreatedDate().format(DateTimeFormatter.ofPattern("yyMMdd"));
+            deleteFile(uploadDate, file.getSaveName());
+        }
+    }
+
+
+    /* 단일 파일 삭제 (From Disk) - 경로 추가 */
+    private void deleteFile(String addPath, String filename) {
+        String filePath = Path.of(uploadPath, addPath, filename).toString();
+        deleteFile(filePath);
+    }
+
+    /* 파일 삭제 (From Disk) */
+    private void deleteFile(String filePath) {
+        File file = new File(filePath);
+        if(file.exists()){
+            file.delete();
+        }
+    }
+
 
 }

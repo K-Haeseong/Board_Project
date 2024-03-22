@@ -22,18 +22,20 @@
 
     <!-- 게시글 저장 -->
    <insert id="save" parameterType="com.study.domain.post.PostRequest" useGeneratedKeys="true" keyProperty="id">
-       insert into tb_post (
-       <include refid="postColumns" />
-       ) values (
-       #{id},
-       #{title},
-       #{content},
-       #{writer},
-       0,
-       #{noticeYn},
-       0,
-       now(),
-       null
+       insert into tb_post
+       (
+            <include refid="postColumns" />
+       ) values
+       (
+            #{id},
+            #{title},
+            #{content},
+            #{writer},
+            0,
+            #{noticeYn},
+            0,
+            now(),
+            null
        )
    </insert>
 
@@ -41,30 +43,38 @@
     <!-- 게시글 상세정보 조회 -->
     <select id="findById" parameterType="long" resultType="com.study.domain.post.PostResponse">
        select
-        <include refid="postColumns" />
-        from tb_post
-        where id = #{value}
+            <include refid="postColumns" />
+        from
+            tb_post
+        where
+            id = #{value}
     </select>
 
 
     <!-- 게시글 수정 -->
     <update id="update" parameterType="com.study.domain.post.PostRequest">
-        update tb_post
+        update
+            tb_post
         set
-        title = #{title},
-        content = #{content},
-        writer = #{writer},
-        modified_date = now()
-        where id = #{id}
+            title = #{title},
+            content = #{content},
+            writer = #{writer},
+            modified_date = now()
+        where
+            id = #{id}
     </update>
 
 
     <!-- 게시글 삭제 -->
     <delete id="deleteById" parameterType="long">
-        update tb_post
-        set delete_yn = 1
-        where id = #{value}
+        update
+            tb_post
+        set
+            delete_yn = 1
+        where
+            id = #{value}
     </delete>
+
 
     <!-- 게시글 검색 -->
     <sql id="search">

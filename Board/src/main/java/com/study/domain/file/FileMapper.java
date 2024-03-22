@@ -16,4 +16,7 @@ public interface FileMapper {
     /* 파일 목록 조회(By Id) */
     List<FileResponse> findAllByIds(List<Long> ids);
 
+    /* 파일 삭제 */
+    void deleteAllByIds(List<Long> ids);
+
 }

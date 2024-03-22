@@ -3,6 +3,7 @@ package com.study.domain.file;
 import lombok.Builder;
 import lombok.Getter;
 
+
 @Getter
 public class FileRequest {
 
