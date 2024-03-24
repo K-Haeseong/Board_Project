@@ -2,7 +2,8 @@ package com.study.common.file;
 
 import com.study.domain.file.FileRequest;
 import com.study.domain.file.FileResponse;
-import org.springframework.beans.factory.annotation.Value;
+import org.springframework.core.io.Resource;
+import org.springframework.core.io.UrlResource;
 import org.springframework.stereotype.Component;
 import org.springframework.util.CollectionUtils;
 import org.springframework.util.StringUtils;
@@ -10,11 +11,11 @@ import org.springframework.web.multipart.MultipartFile;
 
 import java.io.File;
 import java.io.IOException;
+import java.net.MalformedURLException;
 import java.nio.file.Path;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
 import java.util.UUID;
 
@@ -127,5 +128,22 @@ public class FileUtils {
         }
     }
 
+    /* 다운로드 해야 하는 리소스 조회 */
+    public Resource readFileResource(FileResponse file) {
+        String uploadedDate = file.getCreatedDate().format(DateTimeFormatter.ofPattern("yyMMdd"));
+        String filename = file.getSaveName();
+
+        Path filePath = Path.of(uploadPath,uploadedDate, filename);
+
+        try {
+            Resource resource = new UrlResource(filePath.toUri());
+            if( resource.exists() == false || resource.isFile() == false ) {
+                throw new RuntimeException("file not found : " + filePath.toString());
+            }
+            return resource;
+        } catch (MalformedURLException e) {
+            throw new RuntimeException("file not found : " + filePath.toString());
+        }
+    }
 
 }

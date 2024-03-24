@@ -91,7 +91,6 @@
                 // 게시글 상세정보 렌더링
                 function renderPostInfo() {
                     const post = [[ ${post} ]];
-                    // console.log("post : ", post);
 
                     if(!post) {
                         initCreatedDate();
@@ -104,9 +103,9 @@
                     form.createdDate.value = dayjs(post.createdDate).format('YYYY-MM-DD HH:mm');
 
                     fields.forEach(field => {
-                        console.log(field);
+                        // console.log(field);
                         form[field].value = post[field];
-                        console.log(form[field].value, post[field]);
+                        // console.log(form[field].value, post[field]);
                     })
 
                 }
@@ -142,7 +141,7 @@
 
                     document.getElementById('saveBtn').disabled = true;
                     form.noticeYn.value = form.isNotice.checked;
-                    form.removeFileIds.value = removeFileId.getAll.join();
+                    form.removeFileIds.value = removeFileId.getAll().join();
                     form.action = [[ ${post == null} ]] ? '/post/save' : '/post/update';
                     form.submit();
                 }

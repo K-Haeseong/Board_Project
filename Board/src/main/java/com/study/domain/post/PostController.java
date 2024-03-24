@@ -92,7 +92,7 @@ public class PostController {
         fileService.saveFiles(params.getId(), uploadFiles);
 
         // 삭제할 파일 조회
-        List<FileResponse> deleteFiles = fileService.findAllFileByPostId(params.getId());
+        List<FileResponse> deleteFiles = fileService.findAllFileByIds(params.getRemoveFileIds());
 
         // 파일 삭제(Disk)
         fileUtils.deleteFiles(deleteFiles);

@@ -50,7 +50,7 @@
 
                 <p class="btn_set">
                     <button type="button" onclick="goWritePage();" class="btns btn_bdr4 btn_mid">수정</button>
-                    <button type="button" class="btns btn_bdr1 btn_mid" onclick="deletePost()">삭제</button>
+                    <button type="button" onclick="deletePost()" class="btns btn_bdr1 btn_mid">삭제</button>
                     <button type="button" onclick="goListPage();" class="btns btn_bdr4 btn_mid">뒤로</button>
                 </p>
 
@@ -498,7 +498,7 @@
 
             const postId = [[ ${post.id}]];
             const response = getJson(`/posts/${postId}/files`);
-            console.log("response : ", response);
+            // console.log("response : ", response);
 
             // List<FileResponse>가 비어 있는 경우
             if ( !response.length ) {
@@ -508,14 +508,13 @@
             // 파일 영역 추가
             let fileHtml = '<div class="file_down"><div class="cont">';
             response.forEach(row => {
-                fileHtml += `<a href="javascript:alert('파일 다운로드는 준비중입니다.');"><span class="icons"><i class="fas fa-folder-open"></i></span>${row.originalName}</a>`;
+                fileHtml += `<a href="/posts/${postId}/files/${row.id}/download"><span class="icons"><i class="fas fa-folder-open"></i></span>${row.originalName}</a>`;
             })
             fileHtml += '</div></div>';
 
             // 파일 HTML 렌더링
             document.getElementById('files').innerHTML = fileHtml;
             }
-
 
 
             /*]]>*/

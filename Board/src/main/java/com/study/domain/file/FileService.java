@@ -47,4 +47,9 @@ public class FileService {
         fileMapper.deleteAllByIds(ids);
     }
 
+    /* 파일 정보 상세 조회 */
+    public FileResponse findFileById(Long id) {
+        return fileMapper.findById(id);
+    }
+
 }
