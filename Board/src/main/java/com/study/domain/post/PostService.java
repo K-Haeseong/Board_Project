@@ -80,4 +80,10 @@ public class PostService {
         List<PostResponse> list = postMapper.findAll(params);
         return new PagingResponse<>(list, pagination);
     }
+
+    @Transactional
+    /* 게시글 조회수 증가 */
+    public void updateViewCnt(Long id) {
+        postMapper.updateViewCnt(id);
+    }
 }

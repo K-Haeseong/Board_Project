@@ -73,6 +73,7 @@ public class PostController {
     @GetMapping("/post/view")
     public String openPostView(Long id, Model model) {
         PostResponse post = postService.findPostById(id);
+        postService.updateViewCnt(id);
         model.addAttribute("post", post);
         return "post/view";
     }

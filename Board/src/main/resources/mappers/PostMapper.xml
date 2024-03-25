@@ -136,4 +136,14 @@
             <include refid="search" />
     </select>
 
+
+    <update id="updateViewCnt" parameterType="long">
+        update
+            tb_post
+        set
+            view_cnt = view_cnt + 1
+        where
+            id = #{value}
+    </update>
+
 </mapper>
