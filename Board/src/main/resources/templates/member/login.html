@@ -146,7 +146,7 @@
 					location.href = "/post/list";
 				},
 				error : function (request, status, error) {
-					console.log("request : " + request.responseText + "\n" 
+					console.log("request : " + request + "\n" 
 								+ "status : " + status + "\n" 
 								+ "error : " + error);
 					alert('아이디와 비밀번호를 다시 입력 해주세요.');
@@ -182,7 +182,7 @@
 			$.ajax({
 				url : "/member-count",
 				method : "get",
-				dataType : "json",
+				// dataType : "json",
 				data : params,
 				async : false,
 				success : function(response) {
@@ -197,7 +197,7 @@
 					}
 				},
 				error : function(request, status, error) {
-					console.log("request : " + request.responseText + "\n" 
+					console.log("request : " + request + "\n" 
 								+ "status : " + status + "\n" 
 								+ "error : " + error);
 				}

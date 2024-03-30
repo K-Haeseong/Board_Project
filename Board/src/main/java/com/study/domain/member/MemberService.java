@@ -1,13 +1,16 @@
 package com.study.domain.member;
 
 import lombok.RequiredArgsConstructor;
+import org.springframework.dao.DuplicateKeyException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.sql.SQLIntegrityConstraintViolationException;
+
 @Service
 @RequiredArgsConstructor
-public class memberService {
+public class MemberService {
 
     private final MemberMapper memberMapper;
     private final PasswordEncoder passwordEncoder;
@@ -16,7 +19,11 @@ public class memberService {
     @Transactional
     public Long saveMember(MemberRequest params) {
         params.encodingPassword(passwordEncoder);
-        memberMapper.save(params);
+        try {
+            memberMapper.save(params);
+        }catch (DuplicateKeyException e){
+            throw new DuplicateMemberException(e);
+        }
         return params.getId();
     }
 

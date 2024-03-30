@@ -3,16 +3,19 @@ package com.study.domain.member;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpSession;
 import lombok.RequiredArgsConstructor;
+import org.springframework.dao.DuplicateKeyException;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 
 @Controller
 @RequiredArgsConstructor
-public class memberController {
+public class MemberController {
 
-    private final memberService memberService;
-    // final로 선언된 필드는 반드시 객체 생성 시점 또는 생성자에서 초기화되어야 한다.
+    private final MemberService memberService;
+    // final로 선언된 필드는 반드시 객체 생성 시점(생성자) 또는 선언 시점에서 초기화되어야 한다.
     // 초기화를 강제하고, 객체의 유효한 상태를 보장하는데 도움이 된다.
+
 
     // 로그인 페이지
     @GetMapping("/login")
@@ -52,15 +55,23 @@ public class memberController {
     @PostMapping("/members")
     @ResponseBody
     /* 회원 정보 저장(회원가입)*/
-    public Long memberSave(@RequestBody MemberRequest params) {
-        return memberService.saveMember(params);
+    public ResponseEntity<Long> memberSave(@RequestBody MemberRequest params) {
+
+        Long id = memberService.saveMember(params);
+
+        return ResponseEntity
+                .ok()
+                .body(id);
     }
 
     @GetMapping("/members/{loginId}")
-    @ResponseBody
     /* 회원 상세 정보 조회 */
-    public MemberResponse findMemberByLoginId(@PathVariable String loginId) {
-        return memberService.findMemberByLoginId(loginId);
+    public ResponseEntity<MemberResponse> findMemberByLoginId(@PathVariable String loginId) {
+        MemberResponse response = memberService.findMemberByLoginId(loginId);
+
+        return ResponseEntity
+                .ok()
+                .body(response);
     // loginId로 구분 하는 이유
     //
     // 개인화 및 식별성: 로그인 아이디나 사용자명을 사용하여 회원을 식별하는 것은 해당 회원의 개인화된 정보를 제공하고, 다른 사용자와의 혼동을 방지하는 데 도움된다.
@@ -76,8 +87,11 @@ public class memberController {
     /* 회원 수 세기(중복체크) */
     @GetMapping("/member-count")
     @ResponseBody
-    public int countMemberByLoginId(@RequestParam("loginId") String loginId) {
-        return memberService.countMemberByLoginId(loginId);
+    public ResponseEntity<Integer> countMemberByLoginId(@RequestParam("loginId") String loginId) {
+        int count = memberService.countMemberByLoginId(loginId);
+        return ResponseEntity
+                .ok()
+                .body(count);
     }
 
 }
